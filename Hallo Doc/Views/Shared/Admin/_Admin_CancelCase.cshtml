@@ -1,0 +1,49 @@
+﻿@model Data_Access.Custom_Models.ModalCm
+
+@* Cancel case *@
+
+<div class="modal fade" id="cancelModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <div class="modal-title text-light" id="exampleModalLongTitle">Confirm Cancellation</div>
+                <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <form class="p-3" method="post" id="cancelCaseForm" onsubmit="CancelCase(@Model.cancelCaseModal.RequestId)">
+                <input type="text" asp-for="@Model.cancelCaseModal.RequestId" hidden />
+                <input type="text" asp-for="@Model.StatusForName" hidden />
+                <div class="text-secondary">
+                    Patient Name:
+                    <span class="text-info fs-5 fw-bold">
+                        @Model.cancelCaseModal.Name
+                    </span>
+                </div>
+
+                <select class="form-select mt-4 text-secondary" aria-label="Reasons for Cancellation" asp-for="@Model.cancelCaseModal.CasetagId">
+                    <option selected disabled>Reasons for Cancellation</option>
+                    @foreach (var obj in Model.casetags.ToList())
+                    {
+                        <option value="@obj.Casetagid">
+                            @obj.Name
+                        </option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="cancelCaseModal.CasetagId"></span>
+
+                <div class="mt-4 form-floating text-secondary">
+                    <textarea class="form-control h-100" id="floatingInputNotes" placeholder="Provide Additional Notes" rows="3" asp-for="@Model.cancelCaseModal.CancellationNotes"></textarea>
+                    <label for="floatingInputNotes" class="text-wrap">Provide Additional Notes</label>
+                    <span class="text-danger" asp-validation-for="cancelCaseModal.CancellationNotes"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-info continue-btn mx-2" >Confirm</button>
+                    <button type="button" class="btn cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

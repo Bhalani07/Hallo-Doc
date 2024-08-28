@@ -1,0 +1,37 @@
+﻿@model Data_Access.Custom_Models.ModalCm
+
+@* Block Case *@
+<div class="modal fade" id="blockModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <div class="modal-title text-light" id="exampleModalLongTitle">Confirm Block</div>
+                <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+             <form class="p-3" id="blockCaseForm" method="post" onsubmit="BlockCase(@Model.blockCaseModal.RequestId)">
+                <input type="text" asp-for="@Model.blockCaseModal.RequestId" hidden />
+                <div class="text-secondary">
+                    Patient Name: 
+                    <span class="text-info fs-5 fw-bold">
+                        @Model.blockCaseModal.Name
+                    </span>
+                </div>
+
+                <div class="mt-4 form-floating text-secondary">
+                    <textarea class="form-control h-100" id="floatingInputBlock" placeholder="Reason for Block Request" rows="3" asp-for="@Model.blockCaseModal.BlockReason"></textarea>
+                    <label for="floatingInputBlock" class="text-wrap">Reason for Block Request</label>
+                    <span class="text-danger" asp-validation-for="blockCaseModal.BlockReason"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                    @* <button type="submit" class="btn btn-info continue-btn mx-2" data-bs-dismiss="modal">Confirm</button> *@
+                    <button type="submit" class="btn btn-info continue-btn mx-2">Confirm</button>
+                    <button type="button" class="btn cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

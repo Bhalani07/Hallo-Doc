@@ -1,0 +1,66 @@
+﻿@model Assignment_Data.Custom_Model.LibraryCm;
+
+<div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h1 class="modal-title text-white fs-5" id="addBookModalLabel">Book Forms</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form class="row" method="post" id="addBookFormId" onsubmit="addBookToLibrary()">
+                    <div class="col-6 form-floating mb-3">
+                        <input type="text" class="form-control bg-transparent border border-2 shadow-none" id="BookName" asp-for="@Model.BookName"
+                               placeholder="">
+                        <label for="BookName" class="ms-2">Book Name</label>
+                        <span class="text-danger" asp-validation-for="@Model.BookName"></span>
+                    </div>
+                    <div class="col-6 form-floating mb-3">
+                        <input type="text" class="form-control bg-transparent border border-2 shadow-none" id="Author" asp-for="@Model.Author"
+                               placeholder="">
+                        <label for="Author" class="ms-2">Author</label>
+                        <span class="text-danger" asp-validation-for="@Model.Author"></span>
+                    </div>
+                    <div class="col-6 form-floating mb-3">
+                        <input type="text" class="form-control bg-transparent border border-2 shadow-none" id="Borrower" asp-for="@Model.BorrowerName"
+                               placeholder="">
+                        <label for="Borrower" class="ms-2">Borrower Name</label>
+                        <span class="text-danger" asp-validation-for="@Model.BorrowerName"></span>
+                    </div>
+                    <div class="col-6 form-floating mb-3">
+                        <input type="date" class="form-control bg-transparent border border-2 shadow-none" id="IssueDate" min="@DateTime.Now.Date.ToString("yyyy-MM-dd")" value="" asp-for="@Model.IssueDate">
+                        <label for="IssueDate" class="ms-2">Date Of Issue</label>
+                        <span class="text-danger" asp-validation-for="@Model.IssueDate"></span>
+                    </div>
+                    <div class="col-6 form-floating mb-3">
+                        <select id="GenereId" class="form-select p-0 ps-2 mb-2 border border-2 shadow-none" aria-label="Default select example" asp-for="@Model.Genere">
+                            <option selected disabled>Select Genere</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Science Fiction">Science Fiction</option>
+                            <option value="Historic Fiction">Historic Fiction</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="@Model.Genere"></span>
+                    </div>
+                    <div class="col-6 form-floating mb-3">
+                        <input type="text" class="form-control bg-transparent border border-2 shadow-none" id="City"
+                               placeholder="" asp-for="@Model.City">
+                        <label for="City" class="ms-2">City</label>
+                        <span class="text-danger" asp-validation-for="@Model.City"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="reset" class="col-5 btn btn-light shadow-none">Cancel</button>
+                        <button type="submit" class="col-5 btn btn-primary shadow-none">Save</button>
+                    </div>
+                </form>               
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,163 @@
+﻿@model Data_Access.Custom_Models.ConciergeRequestCm
+@{
+    ViewData["Title"] = "Concierge Request";
+}
+
+<div class="main-container d-flex flex-column justify-content-between bg-body-tertiary">
+    <partial name="_Header" />
+
+    <div class="container mt-4 d-flex justify-content-between align-items-center">
+        <div class="bla"></div>
+
+        <div class="bla"></div>
+
+        <a class="btn btn-outline-info fw-bold" asp-controller="Patient" asp-action="SubmitRequest">
+            <i class="bi bi-caret-left-fill"></i> Back
+        </a>
+    </div>
+
+    <form method="post" class="container form-control shadow d-flex flex-column mx-auto mt-3 mb-3" onsubmit="return checkForm()">
+        <h4 class="mt-3 mb-3">Concierge Information</h4>
+        <div class="row">
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeFName" type="text" class="form-control bg-transparent border border-2" id="floatingConFName"
+                       placeholder="Nirbhay">
+                <label for="floatingConFName" class="ms-2">Your First Name</label>
+                <span class="text-danger" asp-validation-for="ConciergeFName"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeLName" type="text" class="form-control bg-transparent border border-2" id="floatingConLName"
+                       placeholder="Tejani">
+                <label for="floatingConLName" class="ms-2">Your Last Name</label>
+                <span class="text-danger" asp-validation-for="ConciergeLName"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergePhoneWithoutCode" type="tel" class="phone1 form-control bg-transparent border border-2" id="floatingConPhone"
+                       placeholder="">
+                <input type="text" asp-for="ConciergePhone" id="otherPhone" hidden />
+                <span class="text-danger" asp-validation-for="ConciergePhoneWithoutCode"></span>
+                <span class="text-danger"  id="otherPhoneErrorBox"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeEmail" type="text" class="form-control bg-transparent border border-2" id="floatingConMail"
+                       placeholder="name@example.com">
+                <label for="floatingConMail" class="ms-2">Your Email</label>
+                <span class="text-danger" asp-validation-for="ConciergeEmail"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeName" type="text" class="form-control bg-transparent border border-2" id="floatingConProp"
+                       placeholder="Brother">
+                <label for="floatingConProp" class="ms-2">Hotel/Property Name</label>
+                <span class="text-danger" asp-validation-for="ConciergeName"></span>
+            </div>
+        </div>
+
+        <h4 class=" mt-3 mb-3">Concierge Location</h4>
+        <div class="row">
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeStreet" type="text" class="form-control bg-transparent border border-2" id="floatingStreet"
+                       placeholder="Shantinagar">
+                <label for="floatingStreet" class="ms-2">Street</label>
+                <span class="text-danger" asp-validation-for="ConciergeStreet"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeCity" type="text" class="form-control bg-transparent border border-2" id="floatingCity"
+                       placeholder="Bhavnagar">
+                <label for="floatingCity" class="ms-2">City</label>
+                <span class="text-danger" asp-validation-for="ConciergeCity"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <select id="regionId" class="form-select p-0 ps-2 mb-2 regionDropdown" aria-label="Default select example" asp-for="RegionId">
+                    <option selected disabled>Select Region</option>
+                    @foreach (var obj in Model.Regions)
+                    {
+                        <option value="@obj.Regionid">
+                            @obj.Name
+                        </option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="RegionId"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="ConciergeZipCode" type="text" class="form-control bg-transparent border border-2" id="floatingZip"
+                       placeholder="364002">
+                <label for="floatingZip" class="ms-2">Zip Code</label>
+                <span class="text-danger" asp-validation-for="ConciergeZipCode"></span>
+            </div>
+        </div>
+
+        <h4 class="mt-3 mb-3">Patient Information</h4>
+        <div class="form-floating mb-5">
+            <textarea asp-for="Symptons" class="form-control bg-transparent border border-2 h-100 mb-3" rows="3"
+                      placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+            <label for="floatingTextarea">Enter Brief Details of Symptons</label>
+            <span class="text-danger" asp-validation-for="Symptons"></span>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="FirstName" type="text" class="form-control bg-transparent border border-2" id="floatingFName"
+                       placeholder="Meet">
+                <label for="floatingFName" class="ms-2">First Name</label>
+                <span class="text-danger" asp-validation-for="FirstName"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="LastName" type="text" class="form-control bg-transparent border border-2" id="floatingLName"
+                       placeholder="Bhalani">
+                <label for="floatingLName" class="ms-2">Last Name</label>
+                <span class="text-danger" asp-validation-for="LastName"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="BirthDate" type="date" class="form-control bg-transparent border border-2" id="birthDate" max="@DateTime.Now.Date.ToString("yyyy-MM-dd")" value="">
+                <label for="birthDate" class="ms-2">Date Of Birth</label>
+                <span class="text-danger" asp-validation-for="BirthDate"></span>
+            </div>
+        </div>
+
+        <h4 class=" mt-3 mb-3">Patient Contact Information</h4>
+        <div class="row">
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="Email" type="email" class="form-control bg-transparent border border-2" id="pEmail" onblur="isEmailBlocked(), notAdminProvider()"
+                       placeholder="name@example.com">
+                <label for="pEmail" class="ms-2">Email</label>
+                <span class="text-danger" asp-validation-for="Email"></span>
+            </div>
+            <div class="col-12 col-md-6 form-floating mb-3">
+                <input asp-for="PhoneWithoutCode" type="tel" class="phone form-control bg-transparent border border-2" id="pPhone" onblur="isPhoneBlocked()" placeholder="">
+                <input type="text" asp-for="Phone" id="patientPhone" hidden />
+                <span class="text-danger" asp-validation-for="PhoneWithoutCode"></span>
+                <span class="text-danger"  id="phoneErrorBox"></span>
+            </div>
+        </div>
+
+        <h4 class=" mt-3 mb-3">Patient Location</h4>
+        <div class="col-12 col-md-6 form-floating mb-3">
+            <input asp-for="Room" type="text" class="form-control bg-transparent border border-2" id="floatingRoom"
+                   placeholder="A-818">
+            <label for="floatingRoom" class="ms-2">Room # / Suite ( Optional )</label>
+            <span class="text-danger" asp-validation-for="Room"></span>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3 mb-5">
+            <button class="btn btn-info me-md-2 text-white fw-bold" type="submit">Submit</button>
+            <button class="btn btn-outline-info fw-bold" type="reset">Cancel</button>
+        </div>
+    </form>
+
+    <partial name="_Footer" />
+</div>
+
+<div id="loader-container" class="loader-container" style="z-index:150">
+    <div id="loader" class="loader" style="z-index:150"></div>
+</div>
+
+<div class="backdrop" style="z-index:140"></div>
+
+<partial name="_Modal" />
+<partial name="_ValidationScriptsPartial" />
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script>
+    window.onload = function () {
+        mymodalshow();
+    }
+</script>

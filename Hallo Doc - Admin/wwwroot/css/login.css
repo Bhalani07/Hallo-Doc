@@ -1,0 +1,44 @@
+﻿a {
+    text-decoration: none;
+}
+
+.main-container {
+    height: 100vh;
+}
+
+.login-container {
+    height: 100vh;
+    max-width: 500px;
+}
+
+.login-bg-img {
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    /* filter: blur(2px); */
+    opacity: 0.2;
+}
+
+.mode {
+    top: 2%;
+    right: 2%;
+}
+
+.login-logo {
+    height: 17%;
+}
+
+.login-footer {
+    font-size: 15px;
+}
+
+input {
+    &:focus{
+    box-shadow: none !important;
+    border-color: #0dcaf0 !important;
+
+        +label{
+        color: #0dcaf0 !important;
+        }
+    }
+}

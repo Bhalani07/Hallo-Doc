@@ -1,0 +1,32 @@
+﻿@model Data_Access.Custom_Models.ModalCm;
+
+@* Request Support *@
+<div class="modal fade" id="requestSupportModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <div class="modal-title text-light" id="exampleModalLongTitle">Request Support</div>
+                <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <form class="p-3" method="post" id="requestDTYFormId" onsubmit="requestDTYPost()">
+                <div class="text-secondary">
+                    To all unscheduled Physicians. We are short on coverage and needs additional support on call to respond to requests.
+                </div>
+
+                <div class="mt-4 form-floating text-secondary">
+                    <textarea class="form-control h-100" id="floatingInput" placeholder="Request Message" rows="3" asp-for="@Model.RequestSupportMessage"></textarea>
+                    <label for="floatingInput" class="text-wrap">Message</label>
+                    <span class="text-danger" asp-validation-for="@Model.RequestSupportMessage"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-info continue-btn mx-2">Send</button>
+                    <button type="reset" class="btn cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

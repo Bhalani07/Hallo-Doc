@@ -1,0 +1,75 @@
+﻿@model Data_Access.Custom_Models.ModalCm
+
+@* Asign case *@
+<div class="modal fade" id="assignModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <div class="modal-title text-light" id="exampleModalLongTitle">
+                    @if(Model.ModalId == 1)
+                    {
+                        <h5>Assign Request </h5>
+                    }
+                    @if(Model.ModalId == 2)
+                    {
+                        <h5>Transfer Request </h5>
+                    }
+                </div>
+                <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <form class="p-3" method="post" id="asignCaseForm" onsubmit="AsignCase()">
+                <input type="text" asp-for="@Model.asignCaseModal.RequestId" hidden />
+                <input type="text" asp-for="@Model.ModalId" id="statusForName" hidden />
+                @if (Model.ModalId == 1)
+                {
+                    <div class="text-secondary">
+                        To assign this request, search and select another Physician
+                    </div>
+                }
+                @if (Model.ModalId == 2)
+                {
+                    <div class="text-secondary">
+                        To assign this request, search and select another Physician
+                    </div>
+                }
+
+                <select class="form-select mt-4 text-secondary" aria-label="Narrow search by region" asp-for="@Model.asignCaseModal.RegionId" onchange="FilterAsignModal(this.value)">
+                    <option selected disabled>Narrow search by region</option>
+                    @foreach(var obj in Model.regions)
+                    {
+                        <option value="@obj.Regionid">
+                            @obj.Name
+                        </option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="asignCaseModal.RegionId"></span>
+
+                <select class="form-select mt-4 text-secondary" id="physicianId" asp-for="@Model.asignCaseModal.PhysicianId" aria-label="Select Physician">
+                    <option selected disabled>Select Physician</option>
+                    @foreach(var obj in Model.physicians)
+                    {
+                        <option value="@obj.Physicianid">
+                            @obj.Firstname @obj.Lastname
+                        </option>
+                    }
+                </select>
+                <span class="text-danger" asp-validation-for="asignCaseModal.PhysicianId"></span>
+
+                <div class="mt-4 form-floating text-secondary">
+                    <textarea class="form-control h-100" id="floatingInputDescription" asp-for="@Model.asignCaseModal.AsignNotes" placeholder="Description" rows="3"></textarea>
+                    <label for="floatingInputDescription" class="text-wrap">Description</label>
+                    <span class="text-danger" asp-validation-for="asignCaseModal.AsignNotes"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-info continue-btn mx-2">Submit</button>
+                    <button type="button" class="btn cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

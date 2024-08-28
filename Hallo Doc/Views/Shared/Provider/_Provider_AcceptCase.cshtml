@@ -1,0 +1,28 @@
+﻿@model Data_Access.Custom_Models.ModalCm
+
+<div class="modal fade" id="acceptModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-5">
+                <form method="post" id="HousecallModalForm" onsubmit="AcceptCase(@Model.RequestId)">
+
+                    <div class="d-flex justify-content-center ">
+                        <i class="bi bi-info-circle-fill text-info d-flex justify-content-center display-4 mb-3 border border-2 border-info  rounded-circle  p-2"></i>
+                    </div>
+
+                    <h5 class="d-flex justify-content-center mb-3">Confirmation For Accept Case</h5>
+
+                    <p class="text-secondary fw-lighter text-center  mb-3">
+                        Are sure you want to accept this request?
+                    </p>
+
+                    <div class="mt-4 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-info mx-2">Accept</button>
+                        <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

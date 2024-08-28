@@ -1,0 +1,108 @@
+/**************************** Common CSS ************************/
+
+a {
+    text-decoration: none;
+}
+
+input, textarea {
+    &:focus {
+        box-shadow: none !important;
+        border-color: #0dcaf0 !important;
+
+        +label {
+            color: #0dcaf0 !important;
+            transition: ease 0.3s;
+          }
+    }
+}
+
+.form-floating>.form-control:focus~label::after, .form-floating>.form-control:not(:focus) ~label::after{
+    background-color: transparent !important;
+}
+
+
+/**************************** Login CSS ************************/
+
+.login-container{
+    height: 100vh;
+    max-width: 500px;
+}
+
+.login-bg-img{
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    filter: blur(1px);
+    opacity: 0.4;
+}
+
+.mode{
+    top: 2%;
+    right: 2%;
+}
+
+.login-logo{
+    height: 17%;
+}
+
+.login-footer{
+    font-size: 15px;
+}
+
+@media screen and (max-width : 600px){
+    .login-logo{
+        opacity: 0;
+    }
+}
+
+/**************************** Request Screen CSS ************************/
+.submit-container {
+    height: 100vh;
+}
+
+.main-container {
+    min-height: 100vh;
+}
+
+.container-buttons {
+    max-width: 400px;
+}
+
+.pink {
+    background-color: rgb(199, 48, 186, 0.25);
+    border-color: rgb(199, 48, 186) !important;
+    color: rgb(199, 48, 186);
+}
+
+.modal-icon {
+    border: 3px solid yellow;
+    font-size: 80px;
+    border-radius: 100%;
+    padding-left: 22px;
+    padding-right: 22px;
+}
+
+.iti {
+    width: 100% !important;
+}
+
+.iti__country-list {
+    white-space: wrap !important;
+    z-index: 3 !important;
+}
+
+.phone, .phone1 {
+    width: 100%;
+    height: calc(3.5rem + calc(var(--bs-border-width) * 2));
+}
+
+/**************************** Dashboard CSS ************************/
+
+.nav-underline .nav-item .nav-link.active {
+    color: #5bc0de !important;
+}
+
+.create-request-active {
+    background-color: #0dcaf0 !important;
+    color: white !important;
+}

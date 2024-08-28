@@ -1,0 +1,73 @@
+﻿@model Data_Access.Custom_Models.RegisterCm
+@{
+    ViewData["Title"] = "Patient Register Page";
+}
+
+<div class="login-bg-img position-fixed d-flex justify-content-center align-items-center">
+    <img src="~/images/11116016_415.jpg" alt="images" class="h-100">
+</div>
+
+<button class="mode position-absolute btn btn-outline-info border border-2 border-info fs-4 px-2 py-1 rounded fw-bolder me-2" id="dark-mode-btn">
+    <i id="moon" class="bi bi-moon"></i>
+    <i id="sun" class="bi bi-sun d-none"></i>
+</button>
+
+<div class="container login-container d-flex flex-column justify-content-between ms-auto me-auto pt-4 pb-5">
+
+    <div class="login-logo d-flex justify-content-center">
+        <img src="~/images/logo.png" alt="images" class="img-fluid">
+    </div>
+
+
+    <form method="post" class="login-form mb-5">
+        <h3 class="d-flex justify-content-center mb-3">Create Account</h3>
+        <div class="form-floating mb-3 position-relative">
+            <input asp-for="Email" value="@Model.Email" disabled type="email" class="form-control bg-transparent border border-2 border-info" id="floatingEmail"
+                   placeholder="name@example.com">
+            <label for="floatingEmail">Email</label>
+            <div class="user-icon position-absolute top-0 end-0 mx-3 my-2">
+                <i class="bi bi-person-circle fs-4 text-muted"></i>
+            </div>
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+        <div class="form-floating mb-3 position-relative">
+            <input asp-for="Password" type="password" class="form-control bg-transparent border border-2 border-info"
+                   id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+            <div class="pwd-icon position-absolute top-0 end-0 mx-3 my-2">
+                <i class="bi bi-eye fs-4 text-muted"></i>
+            </div>
+            <span class="text-danger" asp-validation-for="Password"></span>
+        </div>
+        <div class="form-floating mb-3 position-relative">
+            <input asp-for="ConfirmPassword" type="password" class="form-control bg-transparent border border-2 border-info"
+                   id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Confirm Password</label>
+            <div class="pwd-icon position-absolute top-0 end-0 mx-3 my-2">
+                <i class="bi bi-eye fs-4 text-muted"></i>
+            </div>
+            <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+        </div>
+        <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-info text-white p-2 mb-3" type="submit"><b>Create</b></button>
+        </div>
+    </form>
+
+    <div class="login-footer d-flex justify-content-around">
+        <div>
+            <a href="#" class="text-muted">Terms of Conditions</a>
+        </div>
+        <span>|</span>
+        <div>
+            <a href="#" class="text-muted">Privacy Policy</a>
+        </div>
+    </div>
+</div>
+
+<div id="loader-container" class="loader-container" style="z-index:150">
+    <div id="loader" class="loader" style="z-index:150"></div>
+</div>
+
+<div class="backdrop" style="z-index:140"></div>
+
+<partial name="_ValidationScriptsPartial" />

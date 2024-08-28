@@ -1,0 +1,203 @@
+﻿@model Data_Access.Custom_Models.ProviderInvoicingCm;
+
+<div class="container">
+
+    <div class="d-flex justify-content-end align-items-center mb-3 mt-2">
+        <div class="mt-3 mt-lg-0" id="buttonProvider">
+            @if (Model.CallId == 1)
+            {
+                <button type="button" class="btn btn-outline-info" onclick="GetAdminInvoicing()">
+                    <i class="bi bi-caret-left-fill"></i> Back
+                </button>
+            }
+            else if (Model.CallId == 2)
+            {
+                <button type="button" class="btn btn-outline-info" onclick="GetProviderInvoicing()">
+                    <i class="bi bi-caret-left-fill"></i> Back
+                </button>
+            }
+
+        </div>
+    </div>
+
+    <div class="border rounded shadow p-3">
+
+        <div class="table-responsive">
+            <form method="post" id="finalizeSheetForm" onsubmit="PostFinalizeTimesheet(@Model.CallId)">
+
+                <input asp-for="@Model.DateSelected" hidden />
+                <input asp-for="@Model.PhysicianId" hidden />
+
+                <table class="table FillTimesheetTable">
+                    <thead class="rounded table-active">
+                        <tr>
+                            <th style="background: transparent;">Date</th>
+                            <th style="background: transparent;">On-call Hours</th>
+                            <th style="background: transparent;">Total Hours</th>
+                            <th style="background: transparent;">Weekend/ Holiday</th>
+                            <th style="background: transparent;">Number of Housecalls</th>
+                            <th style="background: transparent;">Number of phone Consults</th>
+                            @if (Model.CallId == 1)
+                            {
+                                <th style="background: transparent;">Total</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var index = 0;
+                        }
+                        @foreach (var obj in @Model.ProviderTimesheetDetails)
+                        {
+                            <input asp-for="@obj.TimeSheetId" hidden name="providerTimeSheetDetails[@index].TimeSheetId" class="TimeSheetId" />
+                            <input asp-for="@obj.TimeSheetDetailId" hidden name="providerTimeSheetDetails[@index].TimeSheetDetailId" class="TimeSheetDetailIdClass" />
+
+                            <tr class="align-middle timesheet-row">
+                                <td>@obj.ShiftDetailDate</td>
+                                <td>
+                                    @if (@obj.Hours == null)
+                                    {
+                                        <span>0</span>
+                                    }
+                                    else
+                                    {
+                                        @obj.Hours
+                                    }
+                                </td>
+                                <td>
+                                    <input asp-for="@obj.Hours" type="number" min="0" class="form-control w-75" value="@obj.Hours"
+                                           name="providerTimeSheetDetails[@index].Hours" id="floatingTotalHours"
+                                           placeholder="TotalHours">
+                                </td>
+                                <td class="ps-5">
+                                    <input type="checkbox" name="providerTimeSheetDetails[@index].IsWeekend" value="true" class="form-check-input checkbox fileCheckbox" @(obj.IsWeekend == true ? "checked" : "")/>
+                                </td>
+                                <td>
+                                    <input asp-for="@obj.NoOfHouseCalls" type="number" min="0" class="form-control w-75"
+                                           value="@obj.NoOfHouseCalls" name="providerTimeSheetDetails[@index].NoOfHouseCalls"
+                                           id="floatingNumberOfHouseCalls" placeholder="NumberofHouseCalls">
+                                </td>
+                                <td>
+                                    <input asp-for="@obj.NoOfConsults" type="number" min="0" class="form-control w-75"
+                                           value="@obj.NoOfConsults" name="providerTimeSheetDetails[@index].NoOfConsults"
+                                           id="floatingNumberOfPhoneConsults" placeholder="NumberofPhoneConsults">
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                        @if (Model.CallId == 1)
+                        {
+                            <tr>
+                                <td>Payrate</td>
+                                <td></td>
+                                <td>
+                                    <input disabled class="form-control w-75" value="@Convert.ToInt32(@Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 2).Payrate)">
+                                </td>
+                                <td>
+                                    <input disabled class="form-control w-75" value="@Convert.ToInt32(@Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 1).Payrate)">
+                                </td>
+                                <td><input disabled class="form-control w-75" value="@Convert.ToInt32(@Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 7).Payrate)" /></td>
+                                <td><input disabled class="form-control w-75" value="@Convert.ToInt32(@Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 4).Payrate)" /></td>
+                            </tr>
+
+                            <tr>
+                                <td>Invoice Total</td>
+                                <td></td>
+                                <td>
+                                    @{
+                                        var totalHours = Convert.ToInt32(@Model.ProviderTimesheetDetails.Sum(i => i.Hours) * @Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 2).Payrate);
+                                    }
+                                    <input disabled class="form-control w-75" value="@totalHours">
+                                </td>
+                                <td>
+                                    @{
+                                        var totalNightShifts = Convert.ToInt32(@Model.ProviderTimesheetDetails.Count(i => i.IsWeekend == true) * @Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 1).Payrate);
+                                    }
+                                    <input disabled class="form-control w-75" value="@totalNightShifts">
+                                </td>
+                                <td>
+                                    @{
+                                        var totalHouseCalls = Convert.ToInt32(@Model.ProviderTimesheetDetails.Sum(i => i.NoOfHouseCalls) * @Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 7).Payrate);
+                                    }
+                                    <input disabled class="form-control w-75" value="@totalHouseCalls">
+                                </td>
+                                <td>
+                                    @{
+                                        var totalPhoneCalls = Convert.ToInt32(@Model.ProviderTimesheetDetails.Sum(i => i.NoOfConsults) * @Model.PayrateByProvider.FirstOrDefault(i => i.Payratecategoryid == 4).Payrate);
+                                    }
+                                    <input disabled class="form-control w-75" value="@totalPhoneCalls">
+                                </td>
+                                <td>
+                                    @{
+                                        var total = totalHours + totalNightShifts + totalHouseCalls + totalPhoneCalls;
+                                    }
+                                    <input disabled class="form-control w-75" value="@total">
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-info">Submit</button>
+                </div>
+            </form> 
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+        <button type="button" class="btn btn-info text-white me-2" onclick="AddTimeSheetDetailId()" id="AddRecieptBtn">
+            Add Reciepts
+        </button>
+    </div>
+
+    <div id="AddReceiptsContainer"></div>
+
+    <div class="mt-4 d-flex justify-content-end">
+        @if (Model.CallId == 1)
+        {
+            <div class="d-lg-flex justify-content-end gap-2 align-items-center">
+                <input id="bonusAmount" type="number" min="0" class="form-control w-25" placeholder="Bonus Amount">
+                <input id="adminNotes" type="text" class="form-control w-25" placeholder="Admin Description">
+
+                <button type="button" class="btn btn-info text-white me-2" onclick="ApproveTimeSheet()" placeholder="Admin Description">
+                    Approve
+                </button>
+            </div>
+
+        }
+        else if (Model.CallId == 2)
+        {
+            <button type="button" class="btn btn-info text-white me-2" onclick="FinalizeTimeSheet()">
+                Finalize
+            </button>
+        }
+    </div>
+
+</div>
+
+<script>
+    function AddTimeSheetDetailId() {
+        var timeSheetDetailId = [];
+
+        $('.TimeSheetDetailIdClass').each(function () {
+            var detailId = $(this).val();
+            timeSheetDetailId.push(detailId);
+        });
+
+        GetAddReceipts(timeSheetDetailId, @Model.CallId);
+    }
+
+    function FinalizeTimeSheet() {
+        var timeSheetId = $('.TimeSheetId').val();
+
+        ConfirmFinalizeTimeSheet(timeSheetId);
+    }
+
+    function ApproveTimeSheet() {
+        var timeSheetId = $('.TimeSheetId').val();
+
+        ConfirmApproveTimeSheet(timeSheetId);
+    }
+</script>

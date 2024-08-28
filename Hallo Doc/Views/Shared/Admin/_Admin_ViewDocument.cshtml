@@ -1,0 +1,284 @@
+﻿@model Data_Access.Custom_Models.AdminViewDocumentsCm
+
+<div class="container-fluid p-sm-5 p-4">
+
+    <div class="mt-2 ms-1 ms-sm-3 d-flex justify-content-between align-items-center">
+        <h4>Document</h4>
+
+        @if (Model.callId == 2)
+        {
+
+            <a class="btn btn-outline-info fw-bold" onclick="GetProviderDashboard()">
+                <i class="bi bi-caret-left-fill"></i> Back
+            </a>
+        }
+        else if (Model.callId == 1)
+        {
+            <a class="btn btn-outline-info fw-bold" onclick="GetPatientRecordExplore(@Model.userId)">
+                <i class="bi bi-caret-left-fill d-sm-inline d-none"></i> Back
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-outline-info fw-bold" onclick="GetDashboard()">
+                <i class="bi bi-caret-left-fill"></i> Back
+            </a>
+        }
+    </div>
+
+    <div class="container-fluid shadow border rounded my-4 mx-1 mx-sm-3 p-sm-5 p-2">
+        <div class="text-secondary pt-1 my-2">Patient Name</div>
+        <span class="text-info fs-4 my-2">
+            @Model.patientName
+        </span>
+        @if (Model.ConfirmationNumber != null)
+        {
+            <span class="my-2 text-secondary">[ @Model.ConfirmationNumber ]</span>
+        }
+        <div class="my-2 text-secondary">
+            Check here to review and add files that you or the Client/Member has attached to the Request.
+        </div>
+
+        <form method="post" enctype="multipart/form-data" id="viewDocumentFormId" onsubmit="UploadDocument(@Model.requestId, @Model.statusForName, @Model.callId)">
+            <input type="text" asp-for="@Model.requestId" hidden />
+            <input type="text" asp-for="@Model.statusForName" id="statusForName" hidden />
+            <input type="text" asp-for="@Model.callId" id="callId" hidden />
+            <div class="d-sm-flex">
+                <div class="input-group mb-3 border border-2 rounded">
+                    <input type="file" class="form-control" id="inputGroupFile" asp-for="@Model.document">
+                    <label class="input-group-text fw-bold bg-info border-info upload" for="inputGroupFile">
+                        <i class="bi bi-cloud-arrow-up me-2 fw-bold text-white"></i>
+                        <span class="text-white d-none d-sm-block">Upload</span>
+                    </label>
+                </div>
+                <button class="btn btn-outline-info me-md-2 fw-bold d-none ms-2" type="submit" id="upload-btn" style="height: 20%">Upload</button>
+            </div>
+            <span class="text-danger" id="errorBox"></span>
+        </form>
+
+        <div class="text-end pt-3 pe-0 mb-4">
+            <button class="btn btn-outline-info fw-bold downloadAll" type="button">
+                <span class="d-none d-sm-inline-block">Download All</span>
+                <span class="d-inline-block d-sm-none"><i class="bi bi-download text-info"></i></span>
+            </button>
+            <button class="btn btn-outline-info fw-bold deleteAll" type="button">
+                <span class="d-none d-sm-inline-block">Delete All</span>
+                <span class="d-inline-block d-sm-none"><i class="bi bi-trash3 text-info"></i></span>
+            </button>
+            <button class="btn btn-outline-info fw-bold mailAll" type="button">
+                <span class="d-none d-sm-inline-block">Send Email</span>
+                <span class="d-inline-block d-sm-none"><i class="bi bi-envelope text-info"></i></span>
+            </button>
+        </div>
+
+        @if (Model.viewDocuments.Count > 0 || Model.viewDocuments != null)
+        {
+            <div class="container-fluid table-responsive d-none d-lg-block">
+                <table class="table adminDocumentTable">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">
+                                <input type="checkbox" class="checkbox-main checkbox " name="selectall"
+                                       onchange="tickAll()" />
+                                <span class="document-combo ms-5">
+                                    <span class="document-name mx-2">
+                                        Document Name
+                                    </span>
+                                </span>
+                            </th>
+                            <th scope="col">Upload Date</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                            @foreach (var obj in Model.viewDocuments)
+                            {
+                            <tr class="align-middle">
+                                <td class="first-col">
+                                    <input type="checkbox" name="Mark" class="checkbox fileCheckbox" value="@obj.requestWiseFileId"
+                                           onchange="allCheck()" />
+                                    <input type="text" value="@obj.requestId" id="requestId" hidden />
+                                    <span class="document-combo ms-5">
+                                        <i class="bi text-danger fs-5 bi-file-earmark-pdf-fill"></i>
+                                        <span class="document-name mx-2">
+                                                @obj.documentName
+                                        </span>
+                                    </span>
+                                </td>
+                                <td>
+                                        @obj.uploadDate.ToString("MMM")
+                                        @obj.uploadDate.Day,
+                                        @obj.uploadDate.Year
+                                </td>
+                                <td class="text-center">
+                                    <a href="~/content/@obj.documentName" download="@obj.documentName" class="btn btn-outline-info fw-bold download-btn">
+                                        <i class="bi bi-cloud-arrow-down"></i>
+                                    </a>
+                                    <a class="btn btn-outline-info fw-bold delete-btn" onclick="DeleteFile(@obj.requestWiseFileId, @obj.requestId, @Model.statusForName, @Model.callId)">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            }
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="rounded shadow d-block d-lg-none mx-sm-2 mx-0 px-0">
+                <div class="accordion container-fluid p-sm-3 p-0" id="accordionPanelsStayOpenExample">
+                    <table class="w-100 adminDocumentTable">
+                        <thead>
+                            <tr>
+                                <th class="d-none"></th>
+                                <th class="d-none"></th>
+                            </tr>
+                        </thead>
+                        @{
+                            var counter = 1;
+                        }
+                        <tbody>
+                            @foreach (var obj in Model.viewDocuments)
+                            {
+                                <tr class="d-flex flex-column">
+                                    <td>
+                                        <h2 class="accordion-header" id="flush-heading@(counter)">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#flush-collapse@(counter)" aria-expanded="false"
+                                                    aria-controls="flush-collapse@(counter)">
+                                                <input type="checkbox" name="Mark" value="@obj.requestWiseFileId" class="fileCheckbox me-3" onchange="allCheck()" />
+                                                <span class="document-combo ms-sm-5 ms-1">
+                                                    <i class="bi text-danger fs-5 bi-file-earmark-pdf-fill"></i>
+                                                    <span class="document-name mx-2">
+                                                        @obj.documentName
+                                                    </span>
+                                                </span>
+                                            </button>
+                                        </h2>
+                                    </td>
+                                    <td>
+                                        <div id="flush-collapse@(counter)" class="accordion-collapse collapse"
+                                             aria-labelledby="flush-heading@(counter)" data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body main-flex pt-0 d-sm-flex justify-content-around">
+                                                <div class="inner-flex mb-1">
+                                                    <b>Upload Date:</b>
+                                                    @obj.uploadDate.ToString("MMM")
+                                                    @obj.uploadDate.Day,
+                                                    @obj.uploadDate.Year
+                                                </div>
+                                                <div class="inner-flex d-flex justify-content-center gap-2">
+                                                    <a href="~/content/file/@obj.documentName" download="@obj.documentName" type="button" class="btn btn-outline-dark download-btn border-info text-info">
+                                                        <i class="bi bi-cloud-arrow-down"></i>
+                                                    </a>
+                                                    <a type="button" class="btn btn-outline-dark delete-btn border-info text-info" onclick="DeleteFile(@obj.requestWiseFileId, @obj.requestId, @Model.callId)">
+                                                        <i class="bi bi-trash"></i>
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="text-center mt-5">
+                <i class="fa-solid fa-file-circle-exclamation fs-3"></i>
+                <p>No Document Found</p>
+            </div>
+        }
+    </div>
+
+</div>
+
+<script>
+    $('.downloadAll').click(function () {
+        var requstWiseFileId = [];
+
+        $('.fileCheckbox:checked').each(function () {
+            var fileId = $(this).val();
+            requstWiseFileId.push(fileId);
+
+            var filePath = $(this).closest('tr').find('.download-btn')[0].click();
+        });
+
+        if (requstWiseFileId.length === 0) {
+            Swal.fire("Oops", "Please Select Any File To Download", "error");
+        }
+    });
+
+    $('.deleteAll').click(function () {
+        var requstWiseFileId = [];
+
+        $('.fileCheckbox:checked').each(function () {
+            var fileId = $(this).val();
+            requstWiseFileId.push(fileId);
+
+            var filePath = $(this).closest('tr').find('.delete-btn')[0].click();
+        });
+
+        if (requstWiseFileId.length === 0) {
+            Swal.fire("Oops", "Please Select Any File To Delete", "error");
+        }
+    });
+
+    $('.mailAll').click(function () {
+        var requstWiseFileId = [];
+        var requestId = $('#requestId').val();
+        var status = $('#statusForName').val();
+        var callId = $('#callId').val();
+
+        $('.fileCheckbox:checked').each(function () {
+            var fileId = $(this).val();
+            requstWiseFileId.push(fileId);
+        });
+
+        SendFile(requstWiseFileId, requestId, status, callId);
+    });
+
+    $(document).ready(function () {
+        $('.adminDocumentTable').DataTable().destroy();
+        var dataTable = $('.adminDocumentTable').DataTable({
+            "pageLength": 5,
+            pagingType: "full",
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+            }
+        });
+
+        $('.dataTables_length').hide();
+        $('.dataTables_filter').hide();
+
+        $('#inputGroupFile').on('change', function () {
+            var fileName = $('#inputGroupFile').val();
+            var errorMessage = document.getElementById('errorBox');
+
+            if (fileName != "") {
+                if (!(fileName.endsWith('.pdf') || fileName.endsWith('.png') || fileName.endsWith('.jpeg') || fileName.endsWith('.jpg') || fileName.endsWith('.mp4') || fileName.endsWith('.mp3') || fileName.endsWith('.mkv'))) {
+                    errorMessage.innerText = "Upload only pdf, image, audio or video";
+                }
+                else {
+                    errorMessage.innerText = "";
+                    $("#upload-btn").removeClass("d-none");
+                }
+            }
+            else {
+                errorMessage.innerText = "";
+                $("#upload-btn").addClass("d-none");
+            }
+        });
+    });
+
+</script>

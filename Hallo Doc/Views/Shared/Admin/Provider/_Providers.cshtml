@@ -1,0 +1,218 @@
+﻿@model Data_Access.Custom_Models.ProvidersCm;
+
+<style>
+    .form-check-input:checked {
+        background-color: #0dcaf0 !important;
+        border-color: #0dcaf0 !important;
+    }
+</style>
+
+@functions{
+    public string GetProviderStatus(int status)
+    {
+        switch (status)
+        {
+            case 1: return "Active";
+            case 2: return "Pending";
+            case 3: return "Not Active";
+            default: return "Unknown";
+        }
+    }
+}
+
+<div class="container">
+    <h4 class="mb-4">Provider Information</h4>
+
+    <div class="border rounded shadow p-3">
+        <div class="d-md-flex justify-content-between align-items-center mb-3">
+            <form role="search" class="d-flex align-items-center border border-rounded rounded border-info mb-3">
+                <i type="search" class="bi bi-search px-2"></i>
+                <select class="form-select border-0 regionDropdown" aria-label="Default select example" onchange="GetProvider(this.value)" id="regionValue">
+                    <option selected value="0">All Region</option>
+                    @foreach (var obj in Model.Regions)
+                    {
+                        <option value="@obj.Regionid">
+                            @obj.Name
+                        </option>
+                    }
+                </select>
+            </form>
+            <div class="d-flex justify-content-center  mb-3">
+
+                <button type="button" class="btn btn-info text-light" onclick="CreateProviderAccount(1)">Create Provider Account</button>
+            </div>
+        </div>
+        <div class="table-responsive d-lg-block d-none">
+            <table class="table providerListTable">
+                <thead class="table-active">
+                    <tr>
+                        <th class="text-center">Provider Name</th>
+                        <th class="text-center">Role</th>
+                        <th class="text-center">On Call Status</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var obj in Model.Providers)
+                    {
+                        <tr class="align-middle">
+                            <td class="text-center">
+                                <span class="document-name mx-2">
+                                    @obj.Name
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                @obj.Role
+                            </td>
+                            <td class="text-center">
+                                @obj.CallStatus
+                            </td>
+                            <td class="text-center">
+                                    @GetProviderStatus(@obj.Status)
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-outline-info" onclick="ContactProvider(`@obj.Email`)">
+                                    Contact
+                                </button>
+                                <button type="button" class="btn btn-outline-info" onclick="GetEditProvider(@obj.aspId, 1)">
+                                    Edit
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+        <div class="border rounded shadow d-block d-lg-none">
+            <div class="accordion container-fluid p-0" id="accordionPanelsStayOpenExample">
+                <table class="providerListTable w-100">
+                    <thead>
+                        <tr>
+                            <th class="d-none"></th>
+                            <th class="d-none"></th>
+                        </tr>
+                    </thead>
+                    @{
+                        var counter = 1;
+                    }
+                    <tbody>
+                        @foreach (var obj in Model.Providers)
+                        { 
+                        <tr class="d-flex flex-column">
+                            <td>
+                                <h2 class="accordion-header" id="flush-heading@(counter)"></h2>
+
+                                <div class="accordion-button collapsed d-flex flex-column pb-0" data-bs-toggle="collapse"
+                                     data-bs-target="#flush-collapse@(counter)" aria-expanded="false"
+                                     aria-controls="flush-collapse@(counter)">
+
+                                    <div class="w-100 ">
+                                        <span class="fw-bolder">
+                                            @obj.Name
+                                        </span>
+                                    </div>
+                                    <div class="w-100">
+                                        <div class="">
+                                            <span class="fw-bolder">On Call Status : @obj.CallStatus</span> 
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div id="flush-collapse@(counter)" class="accordion-collapse collapse"
+                                     aria-labelledby="flush-heading@(counter)" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body main-flex pt-0">
+                                        <div class="inner-flex pt-1">
+                                            <span class="fw-bolder">Role : @obj.Role</span>
+                                        </div>
+                                        <div class="inner-flex pb-2">
+                                                <span class="fw-bolder">Status : @GetProviderStatus(@obj.Status)</span>
+                                        </div>
+                                        <div class="inner-flex d-flex justify-content-between">
+                                            <button type="button" class="btn btn-outline-dark border-info text-info" onclick="ContactProvider('@obj.Email')">
+                                                Contact
+                                            </button>
+                                                <button type="button" class="btn btn-outline-dark border-info text-info" onclick="GetEditProvider(@obj.aspId, 1)">
+                                                Edit
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                         counter++;
+                        } 
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ContactProviderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <div class="modal-title text-light" id="exampleModalLongTitle">Contact Your Provider</div>
+                <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <form class="p-4 m-1" action="" method="post" id="ContactProviderForm" onsubmit="SendEmailToProvider()">
+                <input type="text" id="contactEmailId" asp-for="@Model.Email" hidden />
+                <div class="text-secondary mb-2">
+                    Choose communication to send message
+                </div>
+               
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="radio" name="ContactRadio" id="Email" checked>
+                    <label class="form-check-label cursor-pointer" for="Email">
+                        Email
+                    </label>
+                </div>
+                
+                <div class="mt-4 form-floating text-secondary">
+                    <textarea class="form-control h-100" id="floatingInputMessage" placeholder="Message" rows="3" asp-for="@Model.ContactMessage"></textarea>
+                    <label for="floatingInputMessage" class="text-wrap">Message</label>
+                    <span class="text-danger" asp-validation-for="@Model.ContactMessage"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-info continue-btn mx-2">Send</button>
+                    <button type="button" class="btn cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />
+
+
+<script>
+    $(document).ready(function () {
+        $('.providerListTable').DataTable().destroy();
+        var dataTable = $('.providerListTable').DataTable({
+            "pageLength": 5,
+            pagingType: "full",
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+            }
+        });
+
+        $('.dataTables_length').hide();
+        $('.dataTables_filter').hide();
+    });
+
+</script>

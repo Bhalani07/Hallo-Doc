@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Admin Forget";
+}
+
+<div class="container-fluid main-container p-0">
+    <div class="row h-100 w-100">
+        <div class="col-12 col-md-6 d-none d-md-block h-100 ">
+            <img src="~/images/11116016_415.jpg" alt="images" class="object-fit-cover w-100 h-100">
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="login-bg-img position-fixed d-flex justify-content-center align-items-center d-block d-md-none">
+                <img src="~/images/11116016_415.jpg" alt="images" class="h-100">
+            </div>
+
+            <button class="mode position-absolute btn btn-outline-info border border-2 border-info fs-4 px-2 py-1 rounded fw-bolder me-2" id="dark-mode-btn">
+                <i id="moon" class="bi bi-moon"></i>
+                <i id="sun" class="bi bi-sun d-none"></i>
+            </button>
+
+            <div class="container login-container d-flex flex-column justify-content-between ms-auto me-auto pt-5 pb-5">
+
+                <div class="login-logo d-flex justify-content-center mt-5">
+                    <img src="~/images/logo.png" alt="images" class="img-fluid">
+                </div>
+
+                <div class="login-form mb-5">
+                    <h3 class="d-flex justify-content-center mb-3">Reset Your Password</h3>
+                    <div class="form-floating mb-3 position-relative">
+                        <input type="email" class="form-control bg-transparent border border-2 border-info" id="floatingEmail"
+                               placeholder="name@example.com">
+                        <label for="floatingEmail">Username</label>
+                        <div class="user-icon position-absolute top-0 end-0 mx-3 my-2">
+                            <i class="bi bi-person-circle fs-4 text-muted"></i>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2 mb-3">
+                        <button class="btn btn-info text-white p-2 mb-3" type="button"><b>Reset Password</b></button>
+                        <h6 class="d-flex justify-content-center">
+                            <a asp-controller="Admin" asp-action="admin_login" class="text-info">
+                                <i class="bi bi-caret-left-fill"></i>
+                                Back To Login
+                            </a>
+                        </h6>
+                    </div>
+                </div>
+
+                <div class="login-footer d-flex justify-content-around">
+                    <div>
+                        <a href="#" class="text-muted">Terms of Conditions</a>
+                    </div>
+                    <span>|</span>
+                    <div>
+                        <a href="#" class="text-muted">Privacy Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

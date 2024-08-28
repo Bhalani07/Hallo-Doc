@@ -1,0 +1,208 @@
+﻿@model Data_Access.Coustom_Models.GetRecordsModel
+
+
+@functions {
+    public string GetRequestStatus(int status)
+    {
+        switch (status)
+        {
+            case 1: return "Unassigned";
+            case 2: return "Accepted";
+            case 3: return "MDEnRoute";
+            case 4: return "MDONSite";
+            case 5: return "Conclude";
+            case 6: return "Cancelled";
+            case 7: return "Cancelled By Patient";
+            case 8: return "Closed";
+            case 9: return "Unpaid";
+            case 10: return "Clear";
+            case 11: return "Block";
+            default: return "Unknown";
+        }
+    }
+}
+
+<div class="w-100 px-2 px-sm-5">
+
+    <div class="d-flex justify-content-between my-2">
+        <h3 class="ms-2 my-1">Patient Records</h3>
+
+        <a class="btn btn-outline-info fw-bold" onclick="GetRecordsTab()">
+            <i class="bi bi-caret-left-fill d-sm-inline d-none"></i> Back
+        </a>
+    </div>
+
+    @if (Model.requestList.Count > 0)
+    {
+        <div class="shadow rounded-2 mt-4 table-responsive d-none d-lg-block p-3 my-3" style="min-height: 50vh;">
+
+            <table class="table exploreTable">
+                <thead class="table-active">
+                    <tr>
+                        <th scope="col" class="text-center">Client/Member</th>
+                        <th scope="col" class="text-center">Created Date</th>
+                        <th scope="col" class="text-center">Confirmation</th>
+                        <th scope="col" class="text-center">Provider Name</th>
+                        <th scope="col" class="text-center">Status</th>
+                        <th scope="col" class="text-center">Final Report</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var obj in Model.requestList)
+                    {
+                        <tr>
+                            @{
+                                var name = obj.name;
+                            }
+                            <td class="text-center">@name</td>
+                            <td class="text-center">@obj.Createddate</td>
+                            <td class="text-center">@obj.Confirmationnumber</td>
+                            <td class="text-center">@obj.ProviderName</td>
+                            <td class="text-center">
+                                @GetRequestStatus(obj.Status)
+                            </td>
+                            <td class="text-center">
+                                @if(obj.isFinalize){
+                                    <button onclick="AdminEncounter(@obj.RequestId, @obj.Status, 1)" class="btn btn-outline-info rounded-2">View</button>
+                                }
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button style="cursor : pointer" class="btn btn-outline-info rounded-2" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu ps-1 py-2">
+                                        <li>
+                                            <button class="dropdown-item" onclick="ViewCaseRecords(@obj.Status, @obj.RequestId, 1)">
+                                                <i class="bi bi-briefcase pe-2 fs-6"></i>View Case
+                                            </button>
+                                        </li>
+
+                                        <li>
+                                            <button class="dropdown-item" onclick="ViewDocuments(@obj.RequestId, @obj.Status, 1)">
+                                                <i class="bi bi-upload pe-2 fs-6"></i>Documents
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="border rounded shadow d-block d-lg-none p-3 my-3">
+            <div class="accordion container-fluid p-0" id="accordionPanelsStayOpenExample">
+                <table class="w-100 exploreTable">
+                    <thead>
+                        <tr>
+                            <th class="d-none"></th>
+                            <th class="d-none"></th>
+                        </tr>
+                    </thead>
+                    @{
+                        var counter = 1;
+                    }
+                    <tbody>
+                        @if (Model.requestList != null)
+                        {
+                            @foreach (var obj in Model.requestList)
+                            {
+                                <tr class="d-flex flex-column">
+                                    <td>
+                                        <h2 class="accordion-header" id="flush-heading@(counter)"></h2>
+
+                                        <div class="accordion-button collapsed d-flex flex-column pb-0" data-bs-toggle="collapse" data-bs-target="#flush-collapse@(counter)" aria-expanded="false" aria-controls="flush-collapse@(counter)">
+
+                                            <div class="w-100 ">
+                                                <span class="fw-bolder">
+                                                    @obj.name
+                                                </span>
+                                            </div>
+                                            <div class="w-100 mt-2">
+                                                <div class="">
+                                                    @obj.Confirmationnumber
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        <div id="flush-collapse@(counter)" class="accordion-collapse collapse" aria-labelledby="flush-heading@(counter)" data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body main-flex pt-2">
+                                                <div class="w-100">
+                                                    <div class="">
+                                                        <span class="fw-bolder">Created Date: </span> @obj.Createddate
+                                                    </div>
+                                                    <div class="">
+                                                        <span class="fw-bolder">Provider: </span> @obj.ProviderName
+                                                    </div>
+                                                    <div class="">
+                                                        <span class="fw-bolder">Status: </span> @GetRequestStatus(@obj.Status)
+                                                    </div>
+                                                    <div class="">
+                                                        <span class="fw-bolder">Final Report: </span>
+                                                        @if (obj.isFinalize)
+                                                        {
+                                                            <button onclick="AdminEncounter(@obj.RequestId, @obj.Status, 1)" class="btn btn-outline-info rounded-2">View</button>
+                                                        }
+                                                    </div>
+                                                    <div class="inner-flex d-flex justify-content-end flex-column">
+                                                        <button style="cursor : pointer" class=" mx-3 mt-1 btn btn-outline-info rounded-2" aria-expanded="false" onclick="ViewCaseRecords(@obj.Status, @obj.RequestId, 1)">
+                                                            <i class="bi bi-briefcase pe-2 fs-6"></i>View Case
+                                                        </button>
+                                                        <button style="cursor : pointer" class="m-3 btn btn-outline-info rounded-2" aria-expanded="false" onclick="ViewDocuments(@obj.RequestId, @obj.Status, 1)">
+                                                            <i class="bi bi-upload pe-2 fs-6"></i>Documents
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-center mt-5">
+            <i class="fa-solid fa-file-circle-exclamation fs-3"></i>
+            <p>No Request Found</p>
+        </div>
+    }
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('.exploreTable').DataTable().destroy();
+        $('.exploreTable').DataTable({
+            "pageLength": 5,
+            pagingType: "full",
+
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+
+                }
+            }
+        });
+        $('.dataTables_length').hide();
+        $('.dataTables_filter').hide();
+    });
+
+
+</script>

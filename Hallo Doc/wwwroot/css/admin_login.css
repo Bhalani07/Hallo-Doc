@@ -1,0 +1,15 @@
+﻿.main-container {
+    height: 100vh;
+}
+
+.login-container {
+    height: 100vh;
+    max-width: 500px;
+}
+
+.login-bg-img {
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.2;
+}

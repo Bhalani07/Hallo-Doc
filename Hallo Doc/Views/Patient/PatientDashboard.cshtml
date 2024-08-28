@@ -1,0 +1,263 @@
+﻿@model Data_Access.Custom_Models.PatientDashboardCm
+
+@{
+    ViewData["Title"] = "Patient Dashboard";
+}
+
+@functions {
+    public string GetStatusString(int statusId)
+    {
+        switch (statusId)
+        {
+            case 1: return "Unassigned";
+            case 2: return "Active";
+            case 3: return "Cancelled";
+            case 4: return "MDEnRoute";
+            case 5: return "MDONSite";
+            case 6: return "Conclude";
+            case 7: return "Cancelled By Patient";
+            case 8: return "Closed";
+            case 9: return "Unpaid";
+            case 10: return "Clear";
+            case 11: return "Blocked";
+            default: return "Unknown";
+        }
+    }
+}
+
+<div class="main-container d-flex flex-column">
+    <partial name="_PatientDashboardHeader" />
+
+    <div class="tab-content container-fluid p-sm-5 p-2 mt-5" id="myTabContent">
+
+        <div class="tab-pane fade show active" id="dashboard-tab-pane" role="tabpanel"
+             aria-labelledby="dashboard-tab" tabindex="0">
+            <h3 class="mb-4">Medical History</h3>
+
+            <div class="container-fluid d-none d-sm-block shadow p-sm-3 p-1 rounded-3">
+                <div class="text-end py-3">
+                    <a class="btn btn-outline-info fw-bold border border-2 border-info" data-bs-toggle="modal" data-bs-target="#myModal1">
+                        <span>Create New Request</span>
+                    </a>
+                </div>
+                <table class="table patientTable">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th scope="col">Created Date</th>
+                            <th scope="col">Current Status</th>
+                            <th scope="col">Chat With</th>
+                            <th scope="col">Document</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in Model.dashboardData)
+                        {
+                            <tr class="align-middle">
+                                <td scope="row">
+                                    @obj.CreatedDate.ToString("MMM")
+                                    @obj.CreatedDate.Day,
+                                    @obj.CreatedDate.Year
+                                </td>
+
+                                <td>
+                                    @GetStatusString(obj.Status)
+                                </td>
+
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-outline-info shadow-none border-info d-flex align-items-center gap-2" onclick="CreateConnection(@obj.RequestId,@obj.AdminAspId), showbackdrop()" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                                            <i class="fa-solid fa-user fs-6"></i>
+                                            <span> Admin</span>
+                                        </button>
+                                        @if (obj.PhysicianId > 0)
+                                        {
+                                            <button class="btn btn-outline-info shadow-none border-info d-flex align-items-center gap-2" onclick="CreateConnection(@obj.RequestId,@obj.PhyAspId,@obj.PhysicianId), showbackdrop()" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                                                <i class="fa-solid fa-user-doctor fs-6"></i>
+                                                <span> Provider</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (obj.DocumentCount > 0)
+                                    {
+                                        <a class="btn btn-outline-info fw-bold" asp-controller="Patient" asp-route-rid=@obj.RequestId asp-action="PatientViewDocument">
+                                            <span><i class="bi bi-file-earmark fw-bold"></i></span>
+                                            <span>@obj.DocumentCount</span>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mx-2 border rounded shadow">
+                <div class="accordion container-fluid d-block d-sm-none  p-3" id="accordionPanelsStayOpenExample">
+                    <div class="text-end py-3">
+                        <a href="#" class="btn btn-outline-info fw-bold border border-2 border-info" data-bs-toggle="modal" data-bs-target="#myModal1">
+                            <span><i class="bi bi-plus text-info fw-bold fs-5"></i></span>
+                        </a>
+                    </div>
+
+                    <hr class="m-0">
+
+                    <table class="patientTable w-100">
+                        <thead>
+                            <tr>
+                                <th class="d-none"></th>
+                                <th class="d-none"></th>
+                            </tr>
+                        </thead>
+
+                        @{
+                            var counter = 1;
+                        }
+
+                        <tbody>
+                            @foreach (var obj in Model.dashboardData)
+                            {
+                                <tr class="d-flex flex-column">
+                                    <td>
+                                        <h2 class="accordion-header" id="flush-heading@(counter)">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#flush-collapse@(counter)" aria-expanded="true"
+                                                    aria-controls="flush-collapse@(counter)">
+                                                <i class="bi bi-clock text-info me-2"></i> <span class="accordion-heading fw-bolder">
+                                                    Created Date:
+                                                    <span class="accordion-value fw-normal">
+                                                        @obj.CreatedDate.ToString("MMM")
+                                                        @obj.CreatedDate.Day,
+                                                        @obj.CreatedDate.Year
+                                                    </span>
+                                                </span>
+                                            </button>
+                                        </h2>
+                                    </td>
+                                    <td>
+                                        <div id="flush-collapse@(counter)" class="accordion-collapse collapse"
+                                             aria-labelledby="flush-heading@(counter)" data-bs-parent="#accordionFlushExample@(counter)">
+                                            <div class="accordion-body main-flex">
+                                                <div class="inner-flex">
+                                                    <i class="bi bi-person-circle text-info"></i>
+                                                    <span class="accordion-heading-inner fw-bolder">
+                                                        Provider:
+                                                        @if (obj.PhysicianName != null)
+                                                        {
+                                                            <span class="accordion-value-inner">
+                                                                @obj.PhysicianName
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="accordion-value-inner">
+                                                                -
+                                                            </span>
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div class="inner-flex">
+                                                    <i class="bi bi-check-circle text-info"></i> <span class="accordion-heading-inner fw-bolder">
+                                                        Current Status:
+                                                        <span class="accordion-value-inner">
+                                                            @GetStatusString(obj.Status)
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                <div class="inner-flex d-flex justify-content-center mt-1">
+                                                    @if (obj.DocumentCount > 0)
+                                                    {
+                                                        <a class="btn btn-outline-info fw-bold" asp-controller="Patient" asp-route-rid=@obj.RequestId asp-action="PatientViewDocument">
+                                                            <span><i class="bi bi-file-earmark fw-bold"></i></span>
+                                                            <span>@obj.DocumentCount Documents</span>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <partial name="_PatientProfile" />
+        </div>
+
+    </div>
+
+    @* <partial name="_Footer" /> *@
+</div>
+
+<div id="loader-container" class="loader-container" style="z-index:150">
+    <div id="loader" class="loader" style="z-index:150"></div>
+</div>
+
+<div class="backdrop" style="z-index:140"></div>
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <div class="modal-dark modal-title" id="exampleModalLongTitle">Create New Request</div>
+                <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="">
+                <input type="hidden" name="" id="redirect-value" value="SubmitForMe">
+                <div class="modal-body">
+                    <span class="modal-head">Here, I want to create new request for ...</span>
+                    <div class="modal-flex d-flex justify-content-center my-3">
+                        <div class="btn common-btn cancel-btn create-request-active border border-1 border-info" onclick="toggleButton(this,'SubmitForMe')"> Me </div>
+                        <div class="btn common-btn cancel-btn ms-2 border border-1 border-info" onclick="toggleButton(this,'SubmitForOther')"> Some One Else</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info continue-btn" data-bs-dismiss="modal" onclick="redirect()">Continue</button>
+                    <button type="button" class="btn cancel-btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<partial name="Chat/_Chat_OffCanvas" />
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/js/chat.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setupSignalRConnection();
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.patientTable').DataTable().destroy();
+        var dataTable = $('.patientTable').DataTable({
+            //"lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+            "pageLength": 5,
+            pagingType: "full",
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+            }
+        });
+
+        $('.dataTables_length').hide();
+        $('.dataTables_filter').hide();
+    });
+
+</script>

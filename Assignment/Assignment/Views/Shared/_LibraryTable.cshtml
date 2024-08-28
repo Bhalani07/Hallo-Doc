@@ -1,0 +1,154 @@
+﻿@model Assignment_Data.Custom_Model.LibraryCm;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="mx-sm-5 mx-2 px-2 my-5 d-sm-flex justify-content-between">
+    <div class="my-2">
+        <input placeholder="Search" class="form-control shadow-none" id="LibrarySearch" />
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary shadow-none text-black" onclick="showAddBookModal()">
+            <i class="bi bi-journal-plus me-2"></i>ADD BOOK
+        </button>
+    </div>
+</div>
+
+@if (Model.LibraryList != null && Model.LibraryList.Count > 0)
+{
+    <div class="table-responsive mx-sm-5 mx-2 px-2 my-2 d-none d-lg-block">
+        <table class="libraryTable table">
+            <thead class="mt-2 table-secondary">
+                <tr>
+                    <th>Book ID</th>
+                    <th>Book Name</th>
+                    <th>Author</th>
+                    <th>Borrower Name</th>
+                    <th>Date of Issue</th>
+                    <th>City</th>
+                    <th>Genere</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var obj in Model.LibraryList)
+                {
+                    <tr>
+                        <td>@obj.Id</td>
+                        <td>@obj.Bookname</td>
+                        <td>@obj.Author</td>
+                        <td>@obj.Borrowername</td>
+                        <td>@obj.Dateofissue?.ToString("MMM dd, yyyy")</td>
+                        <td>@obj.City</td>
+                        <td>@obj.Genere</td>
+                        <td class="d-flex justify-content-start">
+                            <button type="button" class="btn btn-primary shadow-none me-2" onclick="showEditBookModal(@obj.Id)">Edit</button>
+                            <button type="button" class="btn btn-dark shadow-none" onclick="deleteBook(@obj.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-block d-lg-none mx-sm-5 mx-2 px-2 my-2">
+        <div class="accordion container-fluid p-0" id="accordionPanelsStayOpenExample">
+            <table class="w-100 libraryTable">
+                <thead>
+                    <tr>
+                        <th class="d-none"></th>
+                        <th class="d-none"></th>
+                    </tr>
+                </thead>
+                @{
+                    var counter = 1;
+                }
+                <tbody>
+                    @foreach (var obj in Model.LibraryList)
+                    {
+                        <tr class="d-flex flex-column border-bottom">
+                            <td>
+                                <h2 class="accordion-header" id="flush-heading@(counter)"></h2>
+                                <div class="accordion-button collapsed d-flex flex-column pb-0" data-bs-toggle="collapse"
+                                     data-bs-target="#flush-collapse@(counter)" aria-expanded="false"
+                                     aria-controls="flush-collapse@(counter)">
+                                    <div class="w-100 ">
+                                        <span class="fw-bolder">
+                                            @obj.Id : @obj.Bookname
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-0">
+                                <div id="flush-collapse@(counter)" class="accordion-collapse collapse"
+                                     aria-labelledby="flush-heading@(counter)" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body main-flex pt-0">
+                                        <div class="inner-flex pt-2 mobile-font">
+                                            <span class="fw-bolder">Author</span>: @obj.Author
+                                        </div>
+                                        <div class="inner-flex mobile-font">
+                                            <span class="fw-bolder">Borrower Name</span>: @obj.Borrowername
+                                        </div>
+                                        <div class="inner-flex mobile-font">
+                                            <span class="fw-bolder">Date of Issue</span>: @obj.Dateofissue?.ToString("MMM dd, yyyy")
+                                        </div>
+                                        <div class="inner-flex pb-2 mobile-font">
+                                            <span class="fw-bolder">City</span>: @obj.City
+                                        </div>
+                                        <div class="inner-flex pb-2 mobile-font">
+                                            <span class="fw-bolder">Genere</span>: @obj.Genere
+                                        </div>
+                                        <div class="inner-flex d-flex gap-2 justify-content-end mt-1">
+                                            <button type="button" class="btn btn-primary shadow-none" onclick="showEditBookModal(@obj.Id)">Edit</button>
+                                            <button type="button" class="btn btn-dark shadow-none" onclick="deleteBook(@obj.Id)">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center mt-5">
+        <i class="fa-solid fa-file-circle-exclamation fs-3"></i>
+        <p>No Books Found</p>
+    </div>
+}
+
+
+<script>
+    $(document).ready(function () {
+        var dataTable = $('.libraryTable').DataTable({
+            "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+            "pageLength": 10,
+            pagingType: "full",
+            "ordering": false,
+            language: {
+                oPaginate: {
+                    sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                    sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                }
+            }
+        });
+
+        $('#LibrarySearch').on('keyup', function () {
+            var searchValue = $(this).val().toLowerCase();
+            //dataTable.columns(1).search(searchValue, true, false).draw();
+            dataTable.search(searchValue, true, false).draw();
+        });
+
+        //$('.dataTables_length').hide();
+        $('.dataTables_filter').hide();
+    });
+</script>

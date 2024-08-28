@@ -1,0 +1,23 @@
+﻿@model Data_Access.Custom_Models.ModalCm
+
+<div class="modal fade" id="clearModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content pt-4 pb-4 border rounded-4">
+            <div class="container d-flex flex-column pt-4">
+                <div class="d-flex justify-content-center ">
+                    <i class="bi bi-info-circle-fill text-info d-flex justify-content-center display-4 mb-3 border border-2 border-info  rounded-circle p-2"></i>
+                </div>
+                <h5 class="d-flex justify-content-center mb-2">Confirmation for Clear Case</h5>
+            </div>
+            <div class="container pt-4 pb-4 text-center">
+                Are sure you want to clear this request? Once clear this request then you are not able to see this request.
+            </div>
+            <form class="pb-4 pt-4 d-grid gap-2 col-3 mx-auto d-flex" method="post" onsubmit="ClearCase()">
+                <input type="text" asp-for="@Model.RequestId" id="clearRequestId" hidden />
+                <input type="text" asp-for="@Model.StatusForName" id="statusForNameId" hidden />
+                <button type="submit" class="btn btn-info text-white fw-bold " data-bs-dismiss="modal">Clear</button>
+                <button type="button" class="btn btn-outline-info fw-bold " data-bs-dismiss="modal">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>

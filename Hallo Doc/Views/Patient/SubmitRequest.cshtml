@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewData["Title"] = "Submit Request";
+}
+
+<div class="submit-container d-flex flex-column justify-content-between">
+    <partial name="_Header" />
+
+    <div class="container-fluid pt-3 h-100 req-container bg-body-tertiary">
+        <div class="container-header d-flex justify-content-around align-items-center">
+            <div class="bla"></div>
+
+            <div class="heading">
+                <h1>I am a...</h1>
+            </div>
+
+            <a class="btn btn-outline-info fw-bold" asp-controller="Patient" asp-action="PatientLanding">
+                <i class="bi bi-caret-left-fill"></i> Back
+            </a>
+        </div>
+
+        <div class="container-buttons d-flex flex-column mx-auto mt-5">
+            <a asp-controller="Patient" asp-action="PatientRequest">
+                <div class="border border-2 rounded m-2 p-2 fs-6 fw-bold bg-primary-subtle  border-primary d-flex justify-content-center justify-content-md-start">
+                    <div class="d-flex justify-content-center text-primary ">PATIENT</div>
+                </div>
+            </a>
+            <a asp-controller="Patient" asp-action="FamilyRequest">
+                <div class="border border-2 rounded m-2 p-2 fs-6 fw-bold bg-info-subtle border-info d-flex justify-content-center justify-content-md-start">
+                    <div class="d-flex justify-content-center text-info opacity-75">FAMILY / FRIEND</div>
+                </div>
+            </a>
+            <a asp-controller="Patient" asp-action="ConciergeRequest">
+                <div class="border border-2 rounded m-2 p-2 fs-6 fw-bold bg-success-subtle border-success d-flex justify-content-center justify-content-md-start">
+                    <div class="d-flex justify-content-center text-success opacity-75">CONCIERGE</div>
+                </div>
+            </a>
+            <a asp-controller="Patient" asp-action="BusinessRequest">
+                <div class="border border-2 rounded m-2 p-2 fs-6 fw-bold pink d-flex justify-content-center justify-content-md-start">
+                    <div class="d-flex justify-content-center opacity-75">BUSINESS PARTNERS</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <partial name="_Footer" />
+</div>
+
+<div id="loader-container" class="loader-container" style="z-index:150">
+    <div id="loader" class="loader" style="z-index:150"></div>
+</div>
+
+<div class="backdrop" style="z-index:140"></div>

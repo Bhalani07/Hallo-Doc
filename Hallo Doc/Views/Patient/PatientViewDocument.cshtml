@@ -1,0 +1,251 @@
+﻿@model Data_Access.Custom_Models.PatientDashboardCm
+@using Microsoft.AspNetCore.Http
+
+@{
+    ViewData["Title"] = "Patient Documents";
+}
+
+<div class="main-container d-flex flex-column">
+    <partial name="_PatientDashboardHeader" />
+
+    <div class="tab-content container-fluid p-sm-5 p-2 mt-5" id="myTabContent">
+        <div class="tab-pane fade show active" id="dashboard-tab-pane" role="tabpanel"
+             aria-labelledby="dashboard-tab" tabindex="0">
+
+            <div class="mt-2 d-flex justify-content-between align-items-center">
+                <h4>Document</h4>
+                <a class="btn btn-outline-info fw-bold" asp-controller="Patient" asp-action="PatientDashboard">
+                    <i class="bi bi-caret-left-fill"></i> Back
+                </a>
+            </div>
+
+            <div class="container-fluid shadow border rounded mt-3 px-sm-4 px-2 mb-5 pb-5">
+                <div class="text-secondary pt-3 my-2">Patient Name : </div>
+                <span class="text-info fs-4 my-2">
+                    @Model.profileData.FirstName @Model.profileData.LastName
+                </span>
+                <span class="my-2 text-secondary">
+                    @if (Model.ConfirmationNumber != null)
+                    {
+                        <span>[ </span>
+                        @Model.ConfirmationNumber
+                        <span> ]</span>
+                    }
+                </span>
+                <div class="my-2 text-secondary">
+                    Check here for any files that you or doctors of your subsequents
+                    requestors have attatched for you to review.
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="d-sm-flex">
+                        <div class="input-group mb-3 border border-2 rounded">
+                            <input asp-for="Upload" type="file" class="form-control" id="inputGroupFile">
+                            <label class="input-group-text fw-bold bg-info border-info upload" for="inputGroupFile">
+                                <i class="bi bi-cloud-arrow-up me-2 fw-bold text-white"></i>
+                                <span class="text-white d-none d-sm-block">Upload</span>
+                            </label>
+                        </div>
+                        <button class="btn btn-outline-info me-md-2 fw-bold ms-2 d-none" type="submit" id="upload-btn" style="height: 20%">Upload</button>
+                    </div>
+                    <span id="errorBox" class="text-danger"></span>
+                </form>
+
+                <div class="text-end pt-3 pe-0 mb-4">
+                    <button class="btn btn-outline-info fw-bold downloadAll" type="button">
+                        <span class="d-none d-sm-inline-block">Download All</span>
+                        <span class="d-inline-block d-sm-none"><i class="bi bi-download text-info"></i></span>
+                    </button>
+                </div>
+
+                <div class="container-fluid d-none d-md-block">
+                    <table class="table patientUploadTable">
+
+                        <thead class="table-secondary">
+                            <tr>
+                                <th scope="col">
+                                    <input type="checkbox" class="checkbox-main checkbox " name="selectall"
+                                           onchange="tickAll()" />
+                                    <span class="document-combo ms-5">
+                                        <span class="document-name mx-2">
+                                            Document Name
+                                        </span>
+                                    </span>
+                                </th>
+                                <th scope="col">Uploader</th>
+                                <th scope="col">Upload Date</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var obj in Model.documentData)
+                            {
+                                <tr class="align-middle">
+                                    <td class="first-col">
+                                        <input type="checkbox" name="Mark" class="checkbox fileCheckbox"
+                                               onchange="allCheck()" />
+                                        <span class="document-combo ms-5">
+                                            <i class="bi text-danger fs-5 bi-file-earmark-pdf-fill"></i>
+                                            <span class="document-name mx-2">
+                                                @obj.DocumentName
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span>
+                                            @obj.UploderName
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @obj.CreatedDate.ToString("MMM")
+                                        @obj.CreatedDate.Day,
+                                        @obj.CreatedDate.Year
+                                    </td>
+                                    <td>
+                                        <a href="~/content/@obj.DocumentName" download="@obj.DocumentName" class="btn btn-outline-info fw-bold download-btn">
+                                            <i class="bi bi-cloud-arrow-down"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mx-sm-2 mx-0 px-0 rounded shadow">
+                    <div class="accordion container-fluid d-block d-md-none p-sm-3 p-0" id="accordionPanelsStayOpenExample">
+                        <table class="patientUploadTable w-100">
+                            <thead>
+                                <tr>
+                                    <th class="d-none"></th>
+                                    <th class="d-none"></th>
+                                </tr>
+                            </thead>
+
+                            @{
+                                var counter = 1;
+                            }
+
+                            <tbody>
+                                @foreach (var obj in Model.documentData)
+                                {
+                                    <tr class="d-flex flex-column">
+                                        <td>
+                                            <h2 class="accordion-header" id="flush-heading@(counter)">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                        data-bs-target="#flush-collapse@(counter)" aria-expanded="true"
+                                                        aria-controls="flush-collapse@(counter)">
+                                                    <input type="checkbox" name="Mark" class="checkbox fileCheckbox"
+                                                           onchange="allCheck()" />
+                                                    <span class="document-combo ms-sm-5 ms-2">
+                                                        <i class="bi text-danger fs-5 bi-file-earmark-pdf-fill"></i>
+                                                        <span class="document-name mx-sm-2 ms-1">
+                                                            @obj.DocumentName
+                                                        </span>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            <div id="flush-collapse@(counter)" class="accordion-collapse collapse"
+                                                 aria-labelledby="flush-heading@(counter)" data-bs-parent="#accordionFlushExample@(counter)">
+                                                <div class="accordion-body main-flex">
+                                                    <div class="inner-flex">
+                                                        <i class="bi bi-person-circle text-info"></i>
+                                                        <span class="accordion-heading-inner fw-bolder">
+                                                            Uploader:
+                                                            <span class="fw-medium">
+                                                                @obj.UploderName
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="inner-flex">
+                                                        <i class="bi bi-check-circle text-info"></i> <span class="accordion-heading-inner fw-bolder">
+                                                            Upload Date:
+                                                            <span class="accordion-value-inner">
+                                                                @obj.CreatedDate.ToString("MMM")
+                                                                @obj.CreatedDate.Day,
+                                                                @obj.CreatedDate.Year
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="inner-flex d-flex justify-content-center mt-1">
+                                                        <a href="~/content/@obj.DocumentName" download="@obj.DocumentName" class="btn btn-outline-info fw-bold download-btn">
+                                                            Download
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    counter++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <partial name="_PatientProfile" />
+        </div>
+    </div>
+
+    @* <partial name="_Footer" /> *@
+</div>
+
+<div id="loader-container" class="loader-container" style="z-index:150">
+    <div id="loader" class="loader" style="z-index:150"></div>
+</div>
+
+<div class="backdrop" style="z-index:140"></div>
+
+@section Scripts
+    {
+    <script>
+        $('.downloadAll').click(function () {
+            $('.fileCheckbox:checked').each(function () {
+                var filePath = $(this).closest('tr').find('.download-btn')[0].click();
+            });
+        });
+
+        $('#inputGroupFile').on('change', function () {
+            var fileName = $('#inputGroupFile').val();
+            var errorMessage = document.getElementById('errorBox');
+
+            if (fileName != "") {
+                if (!(fileName.endsWith('.pdf') || fileName.endsWith('.png') || fileName.endsWith('.jpeg') || fileName.endsWith('.jpg') || fileName.endsWith('.mp4') || fileName.endsWith('.mp3') || fileName.endsWith('.mkv'))) {
+                    errorMessage.innerText = "Upload only pdf, image, audio or video";
+                    $("#upload-btn").addClass("d-none");
+                }
+                else {
+                    errorMessage.innerText = "";
+                    $("#upload-btn").removeClass("d-none");
+                }
+            }
+            else {
+                errorMessage.innerText = "";
+                $("#upload-btn").addClass("d-none");
+            }
+        });
+
+        $(document).ready(function () {
+            $('.patientUploadTable').DataTable().destroy();
+            var dataTable = $('.patientUploadTable').DataTable({
+                "pageLength": 5,
+                pagingType: "full",
+                language: {
+                    oPaginate: {
+                        sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+                        sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+                    }
+                }
+            });
+
+            $('.dataTables_length').hide();
+            $('.dataTables_filter').hide();
+        });
+
+    </script>
+}
